@@ -1,12 +1,14 @@
 import { Client, Intents } from "discord.js";
 import fetch from "node-fetch";
-import data from "config.json";
-
+import dotenv from "dotenv";
+dotenv.config()
 const client = new Client({
   intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES]
 });
 
 function getLaunches() {
+    console.log(data);
+    console.log(data.token)
     fetch('http://lldev.thespacedevs.com/2.2.0/launch')
     .then(response => response.json())
     .then(data => {
@@ -41,5 +43,5 @@ client.on("messageCreate", (message) => {
     }
   }
 });
-
-client.login("");
+console.log(process.env)
+client.login(process.env.TOKEN);
