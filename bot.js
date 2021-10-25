@@ -1,5 +1,6 @@
 import { Client, Intents } from "discord.js";
 import fetch from "node-fetch";
+import data from "config.json";
 
 const client = new Client({
   intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES]
