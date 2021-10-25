@@ -1,20 +1,29 @@
-import { Client, Intents } from "discord.js";
+import { MessageEmbed, Client, Intents } from "discord.js";
 import fetch from "node-fetch";
 import dotenv from "dotenv";
 dotenv.config()
+
+
+
 const client = new Client({
   intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES]
 });
-
-function getLaunches() {
-    console.log(data);
-    console.log(data.token)
-    fetch('http://lldev.thespacedevs.com/2.2.0/launch')
+function sendMessage(channel, newData) {
+    const embed = new MessageEmbed()
+    .setColor('#000000')
+    .addFields(newData)
+    .setFooter("\u2800".repeat(1000)+"|")
+    channel.send({embeds : [embed]});
+}
+function getLaunches(channel) {
+    return fetch('http://lldev.thespacedevs.com/2.2.0/launch/upcoming?limit=10')
     .then(response => response.json())
     .then(data => {
-        console.log("wtf", data.results.id)
-        const newData = data.results.map(obj => ({id :obj.id}))
-        console.log(newData);
+        const newData = data.results.map(obj => ({
+            name : obj.rocket.configuration.full_name,
+            value : obj.rocket.configuration.family + "\n"
+             + obj.rocket.configuration.family}))
+        sendMessage(channel, newData);
         
         
     })
@@ -35,13 +44,13 @@ client.on("messageCreate", (message) => {
         message.channel.send("Your message contains too many attributes. Please use just !rocket to get upcoming launches, or !rocket StartDate EndDate for a date range.");
     }
     else if (splitMessageLength === 1) {
-        getLaunches();
-        console.log("rocket")
+        getLaunches(message.channel);
+
     }
     else if (splitMessageLength === 3) {
         console.log("rocket range")
     }
   }
 });
-console.log(process.env)
+
 client.login(process.env.TOKEN);
