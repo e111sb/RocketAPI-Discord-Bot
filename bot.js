@@ -3,11 +3,10 @@ import fetch from "node-fetch";
 import dotenv from "dotenv";
 dotenv.config()
 
-
-
 const client = new Client({
   intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES]
 });
+
 function sendEmbeddedMessage(channel, newData) {
     const embed = new MessageEmbed()
     .setColor('#000000')
@@ -15,12 +14,12 @@ function sendEmbeddedMessage(channel, newData) {
     .setFooter("\u2800".repeat(1000)+"|")
     channel.send({embeds : [embed]});
 }
+
 function getLaunches(channel, searchQuery) {
     let URL = "http://ll.thespacedevs.com/2.2.0/launch/upcoming?limit=10";
     if (searchQuery) {
         URL = URL + "&search=" + searchQuery;
     }
-    console.log(URL);
     fetch(URL)
     .then(response => response.json())
     .then(data => {
@@ -32,10 +31,9 @@ function getLaunches(channel, searchQuery) {
     });
 }
 function parseData(JSONToParse) {
-
     const currentTimeInMS = new Date().getTime();
 
-    const newData = JSONToParse.results.map((obj) => {
+    const parsedData = JSONToParse.results.map((obj) => {
         const launchDate = new Date(obj.net);
         const formattedLaunchDate = launchDate.toLocaleString({
             day : "numeric",
@@ -61,11 +59,11 @@ function parseData(JSONToParse) {
             + obj.launch_service_provider.name
         }
     })
-    return newData;
+    return parsedData;
 }
 
 client.on("ready", () => {
-  console.log("I am ready!");
+  console.log("Bot running.");
 });
 
 client.on("messageCreate", (message) => {
